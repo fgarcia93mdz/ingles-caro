@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrenador Interactivo – Integrador de Inglés</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .tab-active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            border-color: #1e3a8a;
+        }
+
+        .tab-inactive {
+            background-color: #ffffff;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
+        .tab-inactive:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- Barra superior con puntaje en vivo y acceso a ayuda memoria -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <span
+                    class="inline-block text-xs font-bold uppercase tracking-wider text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full">
+                    Práctica Guiada · 3.er Año
+                </span>
+                <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 mt-0.5">
+                    Entrenador para el Examen de Inglés
+                </h1>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Contador de puntaje -->
+                <div class="bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 text-right">
+                    <div class="text-[11px] font-semibold uppercase text-slate-500">Puntaje Total</div>
+                    <div class="text-sm sm:text-base font-extrabold text-slate-900">
+                        <span id="score-correct" class="text-emerald-600">0</span>
+                        <span class="text-slate-400">/</span>
+                        <span id="score-total">0</span>
+                        <span id="score-percent" class="text-xs font-semibold text-slate-500 ml-1">(0%)</span>
+                    </div>
+                </div>
+
+                <!-- Botón Ayuda Memoria -->
+                <button id="btn-toggle-cheatsheet" type="button"
+                    class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition cursor-pointer">
+                    Ayuda Memoria
+                </button>
+
+                <!-- Botón Reiniciar -->
+                <button id="btn-reset-all" type="button"
+                    class="bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition cursor-pointer"
+                    title="Reiniciar todas las respuestas y mezclar opciones">
+                    Reiniciar
+                </button>
+            </div>
+        </div>
+
+        <!-- Navegación por los 5 puntos del examen -->
+        <nav class="max-w-4xl mx-auto px-4 pb-3 overflow-x-auto">
+            <div class="flex gap-2 min-w-max" id="nav-tabs">
+                <button data-tab="1"
+                    class="tab-btn tab-active px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition cursor-pointer">
+                    1. Crímenes <span id="badge-1" class="ml-1 text-xs opacity-80">(0/6)</span>
+                </button>
+                <button data-tab="2"
+                    class="tab-btn tab-inactive px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition cursor-pointer">
+                    2. Texto + 5 Preguntas <span id="badge-2" class="ml-1 text-xs opacity-80">(0/5)</span>
+                </button>
+                <button data-tab="3"
+                    class="tab-btn tab-inactive px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition cursor-pointer">
+                    3. When o While <span id="badge-3" class="ml-1 text-xs opacity-80">(0/6)</span>
+                </button>
+                <button data-tab="4"
+                    class="tab-btn tab-inactive px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition cursor-pointer">
+                    4. Verbos (-ing / -ed) <span id="badge-4" class="ml-1 text-xs opacity-80">(0/6)</span>
+                </button>
+                <button data-tab="5"
+                    class="tab-btn tab-inactive px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-bold transition cursor-pointer">
+                    5. Armar Oraciones <span id="badge-5" class="ml-1 text-xs opacity-80">(0/5)</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Panel desplegable: Ayuda Memoria Rápida -->
+    <section id="cheatsheet-panel" class="hidden bg-amber-50 border-b border-amber-200">
+        <div class="max-w-4xl mx-auto px-4 py-5 fade-in">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-base font-extrabold text-amber-950">Ayuda Memoria Rápida (Para consultar mientras
+                    practican)</h2>
+                <button id="btn-close-cheatsheet" type="button"
+                    class="text-xs font-bold text-amber-900 underline cursor-pointer">
+                    Cerrar ayuda
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm">
+                <!-- Tarjeta Crímenes -->
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200">
+                    <h3 class="font-bold text-blue-900 mb-1.5">1. Crímenes clave</h3>
+                    <ul class="space-y-1 text-slate-700">
+                        <li><strong>Robbery:</strong> asalto con violencia/arma.</li>
+                        <li><strong>Burglary:</strong> entrar a robar a una casa o edificio vacío.</li>
+                        <li><strong>Theft:</strong> hurto sin violencia (bici, celular, auto).</li>
+                        <li><strong>Shoplifting:</strong> robar escondiendo cosas en una tienda.</li>
+                        <li><strong>Pickpocketing:</strong> sacar billetera del bolsillo/mochila.</li>
+                        <li><strong>Vandalism:</strong> grafitis o romper propiedad pública.</li>
+                        <li><strong>Arson:</strong> incendio intencional.</li>
+                        <li><strong>Kidnapping:</strong> secuestro de una persona.</li>
+                    </ul>
+                </div>
+
+                <!-- Tarjeta Preguntas Wh- -->
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200">
+                    <h3 class="font-bold text-blue-900 mb-1.5">2. Pistas en Preguntas (Wh-)</h3>
+                    <ul class="space-y-1 text-slate-700">
+                        <li><strong>WHO:</strong> ¿Quién? (buscar persona/nombre).</li>
+                        <li><strong>WHERE:</strong> ¿Dónde? (buscar un lugar).</li>
+                        <li><strong>WHEN:</strong> ¿Cuándo? (buscar día, hora, momento).</li>
+                        <li><strong>WHAT:</strong> ¿Qué? (buscar acción u objeto).</li>
+                        <li><strong>WHY:</strong> ¿Por qué? (buscar <em>because</em> / motivo).</li>
+                        <li><strong>HOW MANY:</strong> ¿Cuántos? (buscar un número).</li>
+                    </ul>
+                </div>
+
+                <!-- Tarjeta When / While y Tiempos -->
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200">
+                    <h3 class="font-bold text-blue-900 mb-1.5">3. When / While y Fórmulas</h3>
+                    <ul class="space-y-1 text-slate-700">
+                        <li><strong>WHILE</strong> + <em>was/were + verbo-ING</em> (acción larga).</li>
+                        <li><strong>WHEN</strong> + <em>Past Simple (-ed / irregular)</em> (acción corta).</li>
+                        <li><strong>Fórmula A:</strong> Persona + <em>was/were -ing</em> + <strong>when</strong> +
+                            Persona + <em>Past Simple</em>.</li>
+                        <li><strong>Fórmula B:</strong> <strong>While</strong> + Persona + <em>was/were -ing</em>,
+                            Persona + <em>Past Simple</em>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenedor principal -->
+    <main class="max-w-4xl w-full mx-auto px-4 py-6 flex-1">
+        <!-- Caja de confirmación de reinicio (sin usar confirm()) -->
+        <div id="reset-banner"
+            class="hidden mb-5 bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 fade-in">
+            <p class="text-sm font-medium">¿Querés borrar todas las respuestas actuales y volver a empezar desde cero?
+            </p>
+            <div class="flex gap-2">
+                <button id="btn-confirm-reset" type="button"
+                    class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3.5 py-2 rounded-xl cursor-pointer">
+                    Sí, reiniciar todo
+                </button>
+                <button id="btn-cancel-reset" type="button"
+                    class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl cursor-pointer">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+
+        <!-- Sección dinámica donde se renderiza cada punto -->
+        <div id="section-container" class="fade-in"></div>
+
+        <!-- Navegación inferior entre secciones -->
+        <div class="mt-8 pt-4 border-t border-slate-200 flex items-center justify-between">
+            <button id="btn-prev-tab" type="button"
+                class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-sm px-4 py-2.5 rounded-xl transition cursor-pointer">
+                Anterior
+            </button>
+            <span id="step-indicator" class="text-xs sm:text-sm font-semibold text-slate-500">
+                Punto 1 de 5
+            </span>
+            <button id="btn-next-tab" type="button"
+                class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition cursor-pointer">
+                Siguiente Punto
+            </button>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Material interactivo de estudio · Podés subir este archivo a Netlify, Vercel o GitHub Pages para compartirlo por
+        link.
+    </footer>
+
+    <script>
+        // =========================================================================
+        // BANCO DE DATOS PEDAGÓGICO (5 PUNTOS EXACTOS DEL EXAMEN)
+        // =========================================================================
+
+        const EXAM_DATA = {
+            // PUNTO 1: VOCABULARIO DE CRÍMENES
+            1: {
+                title: "Punto 1: Vocabulario de Crímenes (Crime Vocabulary)",
+                subtitle: "Leé cada situación en inglés y elegí qué delito ocurrió. Si te equivocás, te explicamos qué dice la frase y cuál es la palabra clave.",
+                items: [
+                    {
+                        id: "c1",
+                        prompt: "A man entered a house at night through a broken window while the family was on vacation and stole a TV.",
+                        translation: "Un hombre entró a una casa de noche por una ventana rota mientras la familia estaba de vacaciones y robó un televisor.",
+                        options: ["Robbery", "Burglary", "Shoplifting", "Pickpocketing"],
+                        correct: "Burglary",
+                        clue: "entered a house at night (entró a una casa de noche)",
+                        whyCorrect: "Cuando alguien entra sin permiso a una casa o edificio vacío para robar, se llama 'burglary' (robo con allanamiento).",
+                        wrongNotes: {
+                            "Robbery": "Elegiste 'Robbery', que es un asalto cara a cara con violencia o amenazas (por ejemplo, en un banco). Acá entraron a una casa vacía de noche.",
+                            "Shoplifting": "Elegiste 'Shoplifting', que es robar mercadería escondiéndola dentro de un local o supermercado.",
+                            "Pickpocketing": "Elegiste 'Pickpocketing', que es robar billeteras o celulares de bolsillos o mochilas en lugares llenos de gente."
+                        }
+                    },
+                    {
+                        id: "c2",
+                        prompt: "Two masked men with guns ran into the bank, shouted 'Put the money in the bag!' and escaped.",
+                        translation: "Dos hombres enmascarados con armas entraron corriendo al banco, gritaron '¡Pongan el dinero en la bolsa!' y escaparon.",
+                        options: ["Theft", "Vandalism", "Robbery", "Arson"],
+                        correct: "Robbery",
+                        clue: "with guns / bank / shouted (con armas, en un banco, amenazando)",
+                        whyCorrect: "Cuando hay intimidación, amenazas o armas para quitarle dinero a alguien directamente, es 'robbery' (asalto).",
+                        wrongNotes: {
+                            "Theft": "Elegiste 'Theft', que es un hurto sin violencia ni amenazas (como llevarse una bicicleta apoyada en la vereda).",
+                            "Vandalism": "Elegiste 'Vandalism', que es romper cosas o pintar grafitis sin robar dinero.",
+                            "Arson": "Elegiste 'Arson', que significa provocar un incendio de manera intencional."
+                        }
+                    },
+                    {
+                        id: "c3",
+                        prompt: "A teenager hid two expensive sweaters inside her backpack in a clothing store and walked out without paying.",
+                        translation: "Una adolescente escondió dos suéteres caros dentro de su mochila en una tienda de ropa y salió sin pagar.",
+                        options: ["Shoplifting", "Burglary", "Kidnapping", "Pickpocketing"],
+                        correct: "Shoplifting",
+                        clue: "in a clothing store / walked out without paying (en una tienda de ropa / salir sin pagar)",
+                        whyCorrect: "Robar productos de un comercio o supermercado haciéndose pasar por cliente es 'shoplifting' (hurto en tiendas).",
+                        wrongNotes: {
+                            "Burglary": "Elegiste 'Burglary', que es forzar la entrada de una casa o local cerrado para robar.",
+                            "Kidnapping": "Elegiste 'Kidnapping', que es secuestrar a una persona.",
+                            "Pickpocketing": "Elegiste 'Pickpocketing', que es robarle a una persona del bolsillo o cartera, no mercadería de un local."
+                        }
+                    },
+                    {
+                        id: "c4",
+                        prompt: "While Sarah was standing on a crowded subway train, someone quietly took her wallet out of her coat pocket.",
+                        translation: "Mientras Sarah estaba parada en un subte lleno de gente, alguien le sacó en silencio la billetera del bolsillo de su abrigo.",
+                        options: ["Robbery", "Pickpocketing", "Theft", "Vandalism"],
+                        correct: "Pickpocketing",
+                        clue: "crowded subway / took her wallet out of her pocket (subte lleno / sacó la billetera del bolsillo)",
+                        whyCorrect: "El robo sigiloso de bolsillos o mochilas en el transporte público se llama 'pickpocketing' (carterismo).",
+                        wrongNotes: {
+                            "Robbery": "Elegiste 'Robbery', pero acá no hubo violencia ni amenazas; la víctima ni se dio cuenta en el momento.",
+                            "Theft": "Aunque 'theft' es robo general, cuando ocurre específicamente sacando cosas del bolsillo en un lugar lleno de gente la palabra exacta es 'pickpocketing'.",
+                            "Vandalism": "Elegiste 'Vandalism', que es dañar o destruir objetos, no sacar una billetera."
+                        }
+                    },
+                    {
+                        id: "c5",
+                        prompt: "Someone set fire to the old wooden warehouse near the port on purpose.",
+                        translation: "Alguien prendió fuego a propósito el viejo depósito de madera cerca del puerto.",
+                        options: ["Arson", "Vandalism", "Murder", "Burglary"],
+                        correct: "Arson",
+                        clue: "set fire to ... on purpose (prendió fuego ... a propósito)",
+                        whyCorrect: "'Set fire' (prender fuego) intencionalmente a un edificio o bosque es 'arson' (incendio provocado).",
+                        wrongNotes: {
+                            "Vandalism": "Elegiste 'Vandalism', que es romper vidrios o hacer pintadas, pero cuando el delito específico es provocar un incendio se llama 'arson'.",
+                            "Murder": "Elegiste 'Murder', que significa asesinato de una persona.",
+                            "Burglary": "Elegiste 'Burglary', que es entrar a robar a una propiedad."
+                        }
+                    },
+                    {
+                        id: "c6",
+                        prompt: "In the story, the dragon carried off Prince Ronald by force and kept him locked inside a cave.",
+                        translation: "En el cuento, el dragón se llevó por la fuerza al príncipe Ronald y lo mantuvo encerrado dentro de una cueva.",
+                        options: ["Theft", "Kidnapping", "Shoplifting", "Robbery"],
+                        correct: "Kidnapping",
+                        clue: "carried off Prince Ronald / locked inside (se llevó a una persona y la encerró)",
+                        whyCorrect: "Llevarse y retener a una persona contra su voluntad es 'kidnapping' (secuestro).",
+                        wrongNotes: {
+                            "Theft": "Elegiste 'Theft', que se usa cuando roban un objeto (una bici, un auto), nunca una persona.",
+                            "Shoplifting": "Elegiste 'Shoplifting', que es robar en una tienda.",
+                            "Robbery": "Elegiste 'Robbery', que es robar dinero o bienes con violencia."
+                        }
+                    }
+                ]
+            },
+
+            // PUNTO 2: LECTURA + 5 PREGUNTAS
+            2: {
+                title: "Punto 2: Comprensión de Texto (Reading + 5 Preguntas)",
+                subtitle: "Leé el texto policial y respondé las 5 preguntas. Usá las pistas de palabras clave (Who, When, Where, Why, What). Si te trabás, podés abrir la ayuda de vocabulario.",
+                passage: {
+                    title: "The Mystery of the Blue Diamond",
+                    text: "Last Saturday night, a daring burglary happened at the Grand Hotel in London. At 10:15 pm, Lady Clara was having dinner in the hotel restaurant while a famous pianist was playing the piano. Suddenly, the lights went out for two minutes. When the lights came back on, Lady Clara screamed because her famous Blue Diamond necklace was missing from her room upstairs. Nobody saw the thief, but the hotel manager found an open balcony window and a muddy shoe print on the carpet. The thief didn't touch Lady Clara's cash or passport; he only stole the Blue Diamond because it was worth three million pounds.",
+                    translation: "El sábado pasado por la noche, ocurrió un audaz robo con allanamiento en el Grand Hotel de Londres. A las 10:15 pm, Lady Clara estaba cenando en el restaurante del hotel mientras un pianista famoso tocaba el piano. De repente, se cortó la luz durante dos minutos. Cuando volvió la luz, Lady Clara gritó porque su famoso collar del Diamante Azul había desaparecido de su habitación en el piso de arriba. Nadie vio al ladrón, pero el gerente del hotel encontró una ventana del balcón abierta y una huella de zapato con barro en la alfombra. El ladrón no tocó el dinero en efectivo ni el pasaporte de Lady Clara; solo robó el Diamante Azul porque valía tres millones de libras.",
+                    keywords: [
+                        "burglary = robo en propiedad",
+                        "having dinner = cenando",
+                        "lights went out = se cortó la luz",
+                        "missing = desaparecido",
+                        "upstairs = piso de arriba",
+                        "muddy shoe print = huella con barro",
+                        "was worth = valía"
+                    ]
+                },
+                items: [
+                    {
+                        id: "r1",
+                        question: "1. When did the burglary happen at the Grand Hotel?",
+                        questionEs: "¿Cuándo ocurrió el robo en el Grand Hotel?",
+                        options: [
+                            "Last Friday morning at 8:00 am.",
+                            "Last Saturday night at 10:15 pm.",
+                            "Yesterday afternoon while she was sleeping.",
+                            "Last Sunday night at midnight."
+                        ],
+                        correct: "Last Saturday night at 10:15 pm.",
+                        clue: "La pregunta empieza con WHEN (¿Cuándo?). En las primeras dos oraciones dice: 'Last Saturday night... At 10:15 pm'.",
+                        whyCorrect: "WHEN siempre pide un momento o fecha. El texto indica exactamente 'Last Saturday night' (el sábado pasado a la noche) y 'At 10:15 pm'.",
+                        wrongNotes: {
+                            "Last Friday morning at 8:00 am.": "Fijate en la primera oración del texto: no fue el viernes a la mañana, sino 'Last Saturday night' (sábado a la noche).",
+                            "Yesterday afternoon while she was sleeping.": "El texto no dice 'yesterday afternoon' ni que estuviera durmiendo; dice que estaba cenando el sábado a la noche.",
+                            "Last Sunday night at midnight.": "No fue el domingo a medianoche; el texto dice 'Saturday night' a las '10:15 pm'."
+                        }
+                    },
+                    {
+                        id: "r2",
+                        question: "2. What was Lady Clara doing when the lights went out?",
+                        questionEs: "¿Qué estaba haciendo Lady Clara cuando se cortó la luz?",
+                        options: [
+                            "She was playing the piano.",
+                            "She was sleeping in her room.",
+                            "She was having dinner in the restaurant.",
+                            "She was talking to the police."
+                        ],
+                        correct: "She was having dinner in the restaurant.",
+                        clue: "Buscá el nombre 'Lady Clara' en la segunda oración: 'Lady Clara was having dinner in the hotel restaurant'.",
+                        whyCorrect: "La pregunta tiene 'was ... doing' (estaba haciendo), así que la respuesta en el texto también tiene un verbo con -ing: 'was having dinner' (estaba cenando).",
+                        wrongNotes: {
+                            "She was playing the piano.": "¡Ojo! El texto dice que 'a famous pianist' (un pianista famoso) estaba tocando el piano, no Lady Clara.",
+                            "She was sleeping in her room.": "Ella no estaba en su habitación; estaba en el restaurante cenando.",
+                            "She was talking to the police.": "La policía ni siquiera aparece mencionada en el texto."
+                        }
+                    },
+                    {
+                        id: "r3",
+                        question: "3. Where was the Blue Diamond necklace before the theft?",
+                        questionEs: "¿Dónde estaba el collar del Diamante Azul antes del robo?",
+                        options: [
+                            "In the hotel restaurant.",
+                            "In Lady Clara's room upstairs.",
+                            "Inside the pianist's bag.",
+                            "In the hotel manager's office."
+                        ],
+                        correct: "In Lady Clara's room upstairs.",
+                        clue: "La pregunta empieza con WHERE (¿Dónde?). Buscá las palabras espejo 'Blue Diamond necklace': '...was missing from her room upstairs'.",
+                        whyCorrect: "WHERE pregunta por un lugar. El texto dice 'from her room upstairs' (de su habitación en el piso de arriba).",
+                        wrongNotes: {
+                            "In the hotel restaurant.": "En el restaurante estaba Lady Clara cenando, pero el collar estaba arriba en su habitación.",
+                            "Inside the pianist's bag.": "El texto no dice que el collar estuviera en el bolso del pianista.",
+                            "In the hotel manager's office.": "El gerente encontró las pistas, pero el collar estaba en la habitación de Lady Clara."
+                        }
+                    },
+                    {
+                        id: "r4",
+                        question: "4. What did the hotel manager find in the room?",
+                        questionEs: "¿Qué encontró el gerente del hotel en la habitación?",
+                        options: [
+                            "A broken door and a black glove.",
+                            "The thief hiding under the bed.",
+                            "An open balcony window and a muddy shoe print.",
+                            "Three million pounds on the carpet."
+                        ],
+                        correct: "An open balcony window and a muddy shoe print.",
+                        clue: "Buscá las palabras espejo 'hotel manager found': '...found an open balcony window and a muddy shoe print on the carpet'.",
+                        whyCorrect: "Justo después de 'found' (encontró) aparecen los dos objetos exactos que halló el gerente.",
+                        wrongNotes: {
+                            "A broken door and a black glove.": "Eso era de otro caso; en este texto encontró una ventana abierta y una huella con barro.",
+                            "The thief hiding under the bed.": "El texto dice 'Nobody saw the thief' (nadie vio al ladrón).",
+                            "Three million pounds on the carpet.": "Tres millones de libras era lo que valía el diamante, no había plata tirada en la alfombra."
+                        }
+                    },
+                    {
+                        id: "r5",
+                        question: "5. Why did the thief steal only the Blue Diamond?",
+                        questionEs: "¿Por qué el ladrón robó solamente el Diamante Azul?",
+                        options: [
+                            "Because Lady Clara gave it to him.",
+                            "Because he didn't see the cash or passport.",
+                            "Because it was worth three million pounds.",
+                            "Because the lights were on."
+                        ],
+                        correct: "Because it was worth three million pounds.",
+                        clue: "La pregunta empieza con WHY (¿Por qué?). En la última oración buscá la palabra 'because': 'because it was worth three million pounds'.",
+                        whyCorrect: "Cuando una pregunta empieza con WHY, casi siempre la respuesta exacta en el texto empieza justo después de 'because'.",
+                        wrongNotes: {
+                            "Because Lady Clara gave it to him.": "Ella no se lo dio; gritó cuando vio que había desaparecido.",
+                            "Because he didn't see the cash or passport.": "El texto dice que no tocó el dinero ni el pasaporte porque solo le interesaba el valor del diamante.",
+                            "Because the lights were on.": "El robo ocurrió justamente cuando se cortó la luz ('the lights went out')."
+                        }
+                    }
+                ]
+            },
+
+            // PUNTO 3: WHEN O WHILE
+            3: {
+                title: "Punto 3: Completar con WHEN o WHILE",
+                subtitle: "Mirá lo que viene JUSTO DESPUÉS del espacio en blanco: si hay 'was/were + -ing' (acción larga), va WHILE. Si hay un verbo en pasado corto (-ed o irregular), va WHEN.",
+                items: [
+                    {
+                        id: "w1",
+                        prompt: "Elizabeth was sleeping in her bed ________ the dragon smashed her castle.",
+                        translation: "Elizabeth estaba durmiendo en su cama ________ el dragón destruyó su castillo.",
+                        options: ["when", "while"],
+                        correct: "when",
+                        clue: "Después del espacio dice: 'the dragon smashed' (Past Simple - acción corta que interrumpe).",
+                        whyCorrect: "Detrás de 'when' va la acción corta en Past Simple ('smashed'). Elizabeth estaba durmiendo (larga) CUANDO el dragón rompió el castillo (corta).",
+                        wrongNotes: {
+                            "while": "Pusiste 'while', pero 'while' (mientras) se usa antes de una acción larga con 'was/were + -ing'. Como después viene 'smashed' (acción corta de golpe), corresponde 'when'."
+                        }
+                    },
+                    {
+                        id: "w2",
+                        prompt: "________ the thief was climbing through the window, the alarm started ringing.",
+                        translation: "________ el ladrón estaba trepando por la ventana, la alarma empezó a sonar.",
+                        options: ["When", "While"],
+                        correct: "While",
+                        clue: "Después del espacio dice: 'the thief was climbing' (was + verbo-ing = acción en progreso).",
+                        whyCorrect: "Como justo después viene 'was climbing' (estaba trepando, acción larga), se usa 'While' (Mientras).",
+                        wrongNotes: {
+                            "When": "Pusiste 'When', pero fijate que justo después del espacio tenés 'was climbing' (was + -ing). Siempre que venga 'was/were + -ing' inmediatamente después, elegí 'While'."
+                        }
+                    },
+                    {
+                        id: "w3",
+                        prompt: "The pickpocket stole my phone ________ I was waiting for the bus.",
+                        translation: "El carterista robó mi teléfono ________ yo estaba esperando el colectivo.",
+                        options: ["when", "while"],
+                        correct: "while",
+                        clue: "Después del espacio dice: 'I was waiting' (was + -ing = acción larga).",
+                        whyCorrect: "'I was waiting' es una acción larga en Past Continuous, por lo tanto el conector que va adelante es 'while' (mientras yo estaba esperando).",
+                        wrongNotes: {
+                            "when": "Pusiste 'when', pero mirá lo que sigue después del espacio: 'I was waiting' (estaba esperando). Como es Past Continuous (was + -ing), va 'while'."
+                        }
+                    },
+                    {
+                        id: "w4",
+                        prompt: "We were watching a movie ________ the lights suddenly went out.",
+                        translation: "Estábamos mirando una película ________ las luces se apagaron de repente.",
+                        options: ["when", "while"],
+                        correct: "when",
+                        clue: "Después del espacio dice: 'the lights suddenly went out' (went = pasado simple irregular, acción corta).",
+                        whyCorrect: "'Went out' (se apagaron) es una acción corta e instantánea en Past Simple, así que va 'when' (cuando).",
+                        wrongNotes: {
+                            "while": "Pusiste 'while', pero apagarse la luz ('went out') no es una acción larga con -ing, sino un corte repentino en Past Simple. Por eso va 'when'."
+                        }
+                    },
+                    {
+                        id: "w5",
+                        prompt: "________ the police arrived at the bank, the robbers were already running away.",
+                        translation: "________ la policía llegó al banco, los ladrones ya estaban escapando.",
+                        options: ["When", "While"],
+                        correct: "When",
+                        clue: "Después del espacio dice: 'the police arrived' (arrived = verbo con -ed en Past Simple).",
+                        whyCorrect: "Justo después del espacio está 'arrived' (Past Simple), no está el -ing. Por eso empieza con 'When' (Cuando llegó la policía...).",
+                        wrongNotes: {
+                            "While": "Pusiste 'While' porque viste 'were running' al final de la oración, ¡pero ojo! Tenés que mirar lo que viene INMEDIATAMENTE después del espacio: 'arrived' (Past Simple), así que va 'When'."
+                        }
+                    },
+                    {
+                        id: "w6",
+                        prompt: "Elizabeth opened the door to the cave ________ the dragon was sleeping.",
+                        translation: "Elizabeth abrió la puerta de la cueva ________ el dragón estaba durmiendo.",
+                        options: ["when", "while"],
+                        correct: "while",
+                        clue: "Después del espacio dice: 'the dragon was sleeping' (was + -ing = acción larga).",
+                        whyCorrect: "Dormir ('was sleeping') es la acción larga de fondo en Past Continuous, así que va 'while' (mientras el dragón dormía).",
+                        wrongNotes: {
+                            "when": "Pusiste 'when', pero después del espacio viene 'was sleeping' (Past Continuous). Antes de 'was/were + -ing' va 'while'."
+                        }
+                    }
+                ]
+            },
+
+            // PUNTO 4: VERBOS EN PAST SIMPLE VS PAST CONTINUOUS
+            4: {
+                title: "Punto 4: Elegir el Verbo Correcto (-ing vs. -ed / irregular)",
+                subtitle: "Aplicá la regla: si está detrás de WHILE o es una acción larga de fondo, va con was/were + -ing. Si es una acción corta o está detrás de WHEN, va en Past Simple.",
+                items: [
+                    {
+                        id: "v1",
+                        prompt: "While the dragon ________ around the world, Elizabeth waited outside the cave.",
+                        translation: "Mientras el dragón ________ alrededor del mundo, Elizabeth esperó afuera de la cueva.",
+                        options: ["flew", "was flying", "were flying", "flying"],
+                        correct: "was flying",
+                        clue: "Está justo después de 'While' y el sujeto es 'the dragon' (singular = he/it -> was).",
+                        whyCorrect: "Después de 'While' va Past Continuous. Como 'the dragon' es uno solo (singular), corresponde 'was flying' (estaba volando).",
+                        wrongNotes: {
+                            "flew": "Pusiste 'flew' (Past Simple), pero como la oración empieza con 'While' (Mientras), necesitamos Past Continuous ('was flying').",
+                            "were flying": "¡Casi! Elegiste bien el -ing, pero 'were' se usa para plural (they/we/you). 'The dragon' es uno solo, así que lleva 'was flying'.",
+                            "flying": "Te faltó el auxiliar 'was' adelante. En Past Continuous nunca va el verbo con -ing solo."
+                        }
+                    },
+                    {
+                        id: "v2",
+                        prompt: "I was walking home when I ________ a strange man near the shop.",
+                        translation: "Yo estaba caminando a casa cuando ________ a un hombre extraño cerca del local.",
+                        options: ["was seeing", "saw", "seed", "were seeing"],
+                        correct: "saw",
+                        clue: "Está justo después de 'when' (acción corta que interrumpe) y 'see' es un verbo irregular.",
+                        whyCorrect: "Detrás de 'when' va Past Simple. El pasado irregular de 'see' (ver) es 'saw' (vi).",
+                        wrongNotes: {
+                            "was seeing": "Pusiste Past Continuous, pero después de 'when' va la acción corta en Past Simple ('saw').",
+                            "seed": "¡Cuidado! 'See' es un verbo irregular, no lleva -ed. Su pasado es 'saw'.",
+                            "were seeing": "No lleva -ing después de 'when', y además 'I' no usa 'were'. La forma correcta es 'saw'."
+                        }
+                    },
+                    {
+                        id: "v3",
+                        prompt: "The students ________ an exam when the fire alarm went off.",
+                        translation: "Los estudiantes ________ un examen cuando sonó la alarma de incendio.",
+                        options: ["took", "was taking", "were taking", "taking"],
+                        correct: "were taking",
+                        clue: "Acción larga antes de 'when' + sujeto plural: 'The students' (ellos = they -> were).",
+                        whyCorrect: "Antes de 'when' va la acción larga que estaba pasando ('were taking'). Como 'students' está en plural, usamos 'were'.",
+                        wrongNotes: {
+                            "took": "Pusiste 'took' (Past Simple), pero hacer un examen es la acción larga que estaba ocurriendo cuando sonó la alarma, así que va Past Continuous ('were taking').",
+                            "was taking": "¡Muy cerca! Usaste -ing, pero 'The students' es plural (ellos), así que lleva 'were taking', no 'was'.",
+                            "taking": "Falta el verbo 'were' adelante del verbo con -ing."
+                        }
+                    },
+                    {
+                        id: "v4",
+                        prompt: "While we ________ dinner, someone broke our car window.",
+                        translation: "Mientras nosotros ________ la cena, alguien rompió la ventanilla de nuestro auto.",
+                        options: ["had", "was having", "were having", "having"],
+                        correct: "were having",
+                        clue: "Está detrás de 'While' y el sujeto es 'we' (nosotros -> were).",
+                        whyCorrect: "Con 'While' + 'we' (nosotros), la forma correcta del Past Continuous es 'were having' (estábamos cenando).",
+                        wrongNotes: {
+                            "had": "Pusiste 'had' (Past Simple), pero detrás de 'While' siempre usamos Past Continuous ('were having').",
+                            "was having": "El sujeto es 'we' (nosotros), y con 'we' siempre se usa 'were', nunca 'was'.",
+                            "having": "Necesita 'were' adelante para formar el Past Continuous."
+                        }
+                    },
+                    {
+                        id: "v5",
+                        prompt: "Elizabeth ________ a paper bag because all her clothes were burnt.",
+                        translation: "Elizabeth ________ una bolsa de papel porque toda su ropa estaba quemada.",
+                        options: ["put on", "was putting on", "were putting on", "putted on"],
+                        correct: "put on",
+                        clue: "Es una acción puntual terminada en el pasado (no hay 'while' ni interrupción). 'Put' es irregular (put - put - put).",
+                        whyCorrect: "Es un hecho puntual en Past Simple: se puso la bolsa. El pasado de 'put' se escribe igual: 'put on'.",
+                        wrongNotes: {
+                            "was putting on": "No es una acción de fondo interrumpida por otra, sino un hecho puntual de la historia en Past Simple ('put on').",
+                            "were putting on": "No lleva -ing ni 'were' (Elizabeth es singular).",
+                            "putted on": "'Put' es un verbo irregular invariable: en pasado sigue siendo 'put', sin -ed."
+                        }
+                    },
+                    {
+                        id: "v6",
+                        prompt: "What were you doing when the robbery ________?",
+                        translation: "¿Qué estabas haciendo cuando ________ el robo?",
+                        options: ["was happening", "happened", "were happening", "happen"],
+                        correct: "happened",
+                        clue: "Está justo después de 'when' (acción corta). 'Happen' es un verbo regular (+ -ed).",
+                        whyCorrect: "Después de 'when' va Past Simple. Como 'happen' (ocurrir) es regular, se le agrega -ed: 'happened'.",
+                        wrongNotes: {
+                            "was happening": "La primera parte ya está en Past Continuous ('were you doing'), así que después de 'when' va el Past Simple ('happened').",
+                            "were happening": "Después de 'when' va Past Simple, no -ing.",
+                            "happen": "Falta conjugarlo en pasado agregando -ed ('happened')."
+                        }
+                    }
+                ]
+            },
+
+            // PUNTO 5: ARMAR ORACIONES COMBINANDO AMBOS TIEMPOS
+            5: {
+                title: "Punto 5: Armar Oraciones Combinando Past Simple + Past Continuous",
+                subtitle: "Este es el punto clave del examen. Mirá las dos acciones sueltas, elegí o armá la oración uniendo la acción larga (was/were + -ing) y la acción corta (Past Simple) con 'when' o 'while'.",
+                items: [
+                    {
+                        id: "s1",
+                        clues: "(Elizabeth / sleep)  +  (the dragon / smash the castle)",
+                        translationHint: "Elizabeth estaba durmiendo cuando el dragón destruyó el castillo.",
+                        mode: "choice",
+                        options: [
+                            "Elizabeth was sleeping when the dragon smashed the castle.",
+                            "Elizabeth slept when the dragon was smashing the castle.",
+                            "Elizabeth was sleep when the dragon smash the castle.",
+                            "While Elizabeth slept, the dragon was smashed the castle."
+                        ],
+                        correct: "Elizabeth was sleeping when the dragon smashed the castle.",
+                        clue: "Acción larga: dormir (was sleeping) + WHEN + Acción corta: destruir (smashed).",
+                        whyCorrect: "Cumple la Fórmula A perfecta: 'Elizabeth was sleeping' (Past Continuous) + 'when' + 'the dragon smashed' (Past Simple).",
+                        wrongNotes: {
+                            "Elizabeth slept when the dragon was smashing the castle.": "¡Están los tiempos al revés! Dormir es la acción larga (lleva was + -ing) y destruir el castillo es el golpe corto (lleva -ed).",
+                            "Elizabeth was sleep when the dragon smash the castle.": "Faltó poner -ing en 'sleeping' y -ed en 'smashed'.",
+                            "While Elizabeth slept, the dragon was smashed the castle.": "Después de 'While' debe ir 'was sleeping' (con -ing), y 'smashed' no lleva 'was' adelante."
+                        }
+                    },
+                    {
+                        id: "s2",
+                        clues: "(While / the guard / drink coffee)  +  (the thief / break the window)",
+                        translationHint: "Mientras el guardia estaba tomando café, el ladrón rompió la ventana.",
+                        mode: "choice",
+                        options: [
+                            "While the guard drank coffee, the thief was breaking the window.",
+                            "While the guard was drinking coffee, the thief broke the window.",
+                            "While the guard were drinking coffee, the thief breaked the window.",
+                            "When the guard was drinking coffee, the thief broke the window."
+                        ],
+                        correct: "While the guard was drinking coffee, the thief broke the window.",
+                        clue: "Fórmula B: While + was drinking (larga) , broke (pasado irregular de break).",
+                        whyCorrect: "Después de 'While' va 'was drinking' (acción larga) y en la segunda parte va 'broke' (pasado irregular de 'break', acción corta).",
+                        wrongNotes: {
+                            "While the guard drank coffee, the thief was breaking the window.": "Pusiste los tiempos invertidos: después de 'While' siempre va 'was drinking' (-ing), y romper la ventana es la acción corta ('broke').",
+                            "While the guard were drinking coffee, the thief breaked the window.": "Dos errores: 'the guard' es singular (lleva 'was', no 'were'), y 'break' es irregular (su pasado es 'broke', no 'breaked').",
+                            "When the guard was drinking coffee, the thief broke the window.": "La consigna pedía empezar con 'While' antes de la acción larga."
+                        }
+                    },
+                    {
+                        id: "s3",
+                        clues: "(We / walk in the park)  +  (we / see a vandal)",
+                        translationHint: "Estábamos caminando en el parque cuando vimos a un vándalo.",
+                        mode: "choice",
+                        options: [
+                            "We was walking in the park when we saw a vandal.",
+                            "We walked in the park while we were seeing a vandal.",
+                            "We were walking in the park when we saw a vandal.",
+                            "We were walking in the park when we see a vandal."
+                        ],
+                        correct: "We were walking in the park when we saw a vandal.",
+                        clue: "Sujeto plural 'We' -> were walking (larga) + when + saw (pasado irregular de see).",
+                        whyCorrect: "'We' usa 'were walking' (Past Continuous), seguido de 'when' y 'saw' (pasado de 'see').",
+                        wrongNotes: {
+                            "We was walking in the park when we saw a vandal.": "¡Casi perfecta! Pero con 'We' (nosotros) se usa 'were', nunca 'was'.",
+                            "We walked in the park while we were seeing a vandal.": "Caminar es la acción larga ('were walking') y ver es la acción corta ('saw').",
+                            "We were walking in the park when we see a vandal.": "Faltó pasar 'see' a pasado simple ('saw')."
+                        }
+                    },
+                    {
+                        id: "s4",
+                        clues: "Escribí vos la oración: (I / study) + (my friend / call me)",
+                        translationHint: "Escribí en inglés: 'Yo estaba estudiando cuando mi amigo me llamó' (o empezando con While).",
+                        mode: "input",
+                        placeholder: "Ej: I was studying when my friend called me.",
+                        acceptedAnswers: [
+                            "i was studying when my friend called me",
+                            "while i was studying my friend called me",
+                            "my friend called me while i was studying"
+                        ],
+                        correct: "I was studying when my friend called me.",
+                        clue: "Fórmula A: I was studying + when + my friend called me. (O Fórmula B: While I was studying, my friend called me).",
+                        whyCorrect: "Excelente armado: combinaste 'was studying' (Past Continuous para la acción larga) con 'called' (Past Simple regular con -ed para la acción corta) usando el conector correcto.",
+                        analyzeInput: function (raw) {
+                            const clean = raw.toLowerCase().replace(/[.,!?]/g, "").trim();
+                            if (!clean) return "No escribiste nada todavía. Probá usando: I was studying when my friend called me.";
+                            if (!clean.includes("studying")) return "Fijate en el verbo 'study': como es la acción larga en Past Continuous, necesita 'was studying' (con -ing).";
+                            if (!clean.includes("was")) return "Te faltó el auxiliar 'was' antes de 'studying' (I was studying).";
+                            if (!clean.includes("called")) return "Fijate en el verbo 'call': como es la acción corta en Past Simple, lleva -ed ('called').";
+                            if (!clean.includes("when") && !clean.includes("while")) return "Te faltó el conector 'when' (antes de 'my friend called') o 'while' (antes de 'I was studying').";
+                            if (clean.includes("while my friend called")) return "Pusiste 'while' antes de 'my friend called', pero 'while' va antes de 'I was studying'. Antes de 'called' va 'when'.";
+                            if (clean.includes("when i was studying")) return "Pusiste 'when' antes de 'I was studying', pero antes de 'was studying' (-ing) va 'while'.";
+                            return "Revisá el orden de las palabras. Modelo correcto: 'I was studying when my friend called me.'";
+                        }
+                    },
+                    {
+                        id: "s5",
+                        clues: "Escribí vos la oración: (The dragon / sleep) + (Elizabeth / open the door)",
+                        translationHint: "Escribí en inglés: 'Mientras el dragón estaba durmiendo, Elizabeth abrió la puerta' (o usando when).",
+                        mode: "input",
+                        placeholder: "Ej: While the dragon was sleeping, Elizabeth opened the door.",
+                        acceptedAnswers: [
+                            "while the dragon was sleeping elizabeth opened the door",
+                            "elizabeth opened the door while the dragon was sleeping",
+                            "the dragon was sleeping when elizabeth opened the door"
+                        ],
+                        correct: "While the dragon was sleeping, Elizabeth opened the door.",
+                        clue: "Fórmula B: While the dragon was sleeping, Elizabeth opened the door. (O Fórmula A: The dragon was sleeping when Elizabeth opened the door).",
+                        whyCorrect: "¡Muy bien! Usaste 'was sleeping' para la acción larga del dragón y 'opened' (-ed) para la acción corta de Elizabeth.",
+                        analyzeInput: function (raw) {
+                            const clean = raw.toLowerCase().replace(/[.,!?]/g, "").trim();
+                            if (!clean) return "Escribí la oración combinando 'was sleeping' y 'opened'.";
+                            if (!clean.includes("sleeping")) return "El verbo 'sleep' es la acción larga, así que va en Past Continuous: 'was sleeping'.";
+                            if (!clean.includes("was")) return "Falta 'was' adelante de 'sleeping' (the dragon was sleeping).";
+                            if (!clean.includes("opened")) return "El verbo 'open' es la acción corta en Past Simple: agregale -ed ('opened').";
+                            if (!clean.includes("when") && !clean.includes("while")) return "Falta unir las dos ideas con 'while' (antes de 'the dragon was sleeping') o 'when' (antes de 'Elizabeth opened').";
+                            if (clean.includes("while elizabeth opened")) return "Recordá: 'while' va pegado a 'was sleeping' (-ing). Delante de 'opened' va 'when'.";
+                            return "Revisá la estructura. Modelo correcto: 'While the dragon was sleeping, Elizabeth opened the door.'";
+                        }
+                    }
+                ]
+            }
+        };
+
+        // =========================================================================
+        // ESTADO DE LA APLICACIÓN
+        // =========================================================================
+        let currentTab = 1;
+        let showPassageHelp = false;
+        // userAnswers[itemId] = { selected: string, isCorrect: boolean, customFeedback?: string }
+        let userAnswers = {};
+
+        // =========================================================================
+        // FUNCIONES AUXILIARES
+        // =========================================================================
+        function getAllItems() {
+            let all = [];
+            for (let t = 1; t <= 5; t++) {
+                all = all.concat(EXAM_DATA[t].items);
+            }
+            return all;
+        }
+
+        function updateScoresAndBadges() {
+            const all = getAllItems();
+            const totalQuestions = all.length;
+            let totalCorrect = 0;
+
+            for (let t = 1; t <= 5; t++) {
+                const items = EXAM_DATA[t].items;
+                const tabCorrect = items.filter(it => userAnswers[it.id] && userAnswers[it.id].isCorrect).length;
+                totalCorrect += tabCorrect;
+                const badge = document.getElementById(`badge-${t}`);
+                if (badge) {
+                    badge.textContent = `(${tabCorrect}/${items.length})`;
+                }
+            }
+
+            document.getElementById("score-correct").textContent = totalCorrect;
+            document.getElementById("score-total").textContent = totalQuestions;
+            const pct = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+            document.getElementById("score-percent").textContent = `(${pct}%)`;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        // =========================================================================
+        // RENDERIZADO DE CADA SECCIÓN
+        // =========================================================================
+        function renderCurrentTab() {
+            const container = document.getElementById("section-container");
+            const data = EXAM_DATA[currentTab];
+
+            // Actualizar botones de pestañas
+            document.querySelectorAll(".tab-btn").forEach(btn => {
+                const tabNum = Number(btn.getAttribute("data-tab"));
+                if (tabNum === currentTab) {
+                    btn.classList.remove("tab-inactive");
+                    btn.classList.add("tab-active");
+                } else {
+                    btn.classList.remove("tab-active");
+                    btn.classList.add("tab-inactive");
+                }
+            });
+
+            // Actualizar navegación inferior
+            document.getElementById("step-indicator").textContent = `Punto ${currentTab} de 5`;
+            document.getElementById("btn-prev-tab").disabled = currentTab === 1;
+            document.getElementById("btn-prev-tab").classList.toggle("opacity-40", currentTab === 1);
+            document.getElementById("btn-next-tab").textContent = currentTab === 5 ? "Volver al Punto 1" : "Siguiente Punto";
+
+            let html = `
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm mb-6">
+          <h2 class="text-lg sm:text-xl font-extrabold text-blue-950">${escapeHtml(data.title)}</h2>
+          <p class="text-sm text-slate-600 mt-1">${escapeHtml(data.subtitle)}</p>
+        </div>
+      `;
+
+            // Si es el Punto 2 (Reading), mostrar el texto policial + botón de ayuda/traducción
+            if (currentTab === 2 && data.passage) {
+                html += `
+          <div class="bg-white rounded-2xl border-2 border-blue-200 p-5 sm:p-6 shadow-sm mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg">
+                Texto para analizar
+              </span>
+              <button
+                type="button"
+                id="btn-toggle-passage-help"
+                class="text-xs font-bold px-3 py-1.5 rounded-lg border transition cursor-pointer ${showPassageHelp
+                        ? "bg-amber-100 text-amber-900 border-amber-300"
+                        : "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200"
+                    }"
+              >
+                ${showPassageHelp ? "Ocultar traducción y palabras clave" : "Me trabé: ver traducción y palabras clave"}
+              </button>
+            </div>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-2">${escapeHtml(data.passage.title)}</h3>
+            <p class="text-sm sm:text-base leading-relaxed text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              ${escapeHtml(data.passage.text)}
+            </p>
+            ${showPassageHelp
+                        ? `
+              <div class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs sm:text-sm space-y-3 fade-in">
+                <div>
+                  <strong class="text-amber-950 block mb-1">Traducción al español para entender la historia:</strong>
+                  <p class="text-slate-700 leading-relaxed">${escapeHtml(data.passage.translation)}</p>
+                </div>
+                <div>
+                  <strong class="text-amber-950 block mb-1">Vocabulario clave del texto:</strong>
+                  <div class="flex flex-wrap gap-1.5">
+                    ${data.passage.keywords
+                            .map(kw => `<span class="bg-white border border-amber-300 text-slate-800 px-2.5 py-1 rounded-lg font-medium">${escapeHtml(kw)}</span>`)
+                            .join("")}
+                  </div>
+                </div>
+              </div>
+            `
+                        : ""
+                    }
+          </div>
+        `;
+            }
+
+            // Renderizar cada pregunta de la sección
+            html += `<div class="space-y-5">`;
+            data.items.forEach((item, index) => {
+                const answerState = userAnswers[item.id];
+                const cardBorder = !answerState
+                    ? "border-slate-200"
+                    : answerState.isCorrect
+                        ? "border-emerald-400 ring-1 ring-emerald-200"
+                        : "border-rose-400 ring-1 ring-rose-200";
+
+                html += `
+          <article class="bg-white rounded-2xl border ${cardBorder} p-5 shadow-sm transition">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex-1">
+                <span class="inline-block text-xs font-bold text-slate-400 uppercase mb-1">Ejercicio ${index + 1}</span>
+                ${item.prompt
+                        ? `<p class="text-base sm:text-lg font-semibold text-slate-900 leading-snug">${escapeHtml(item.prompt)}</p>`
+                        : ""
+                    }
+                ${item.question
+                        ? `<p class="text-base sm:text-lg font-bold text-slate-900 leading-snug">${escapeHtml(item.question)}</p>`
+                        : ""
+                    }
+                ${item.clues
+                        ? `<div class="mt-1 bg-slate-100 border border-slate-200 px-3.5 py-2.5 rounded-xl font-mono text-sm sm:text-base font-bold text-blue-950">${escapeHtml(item.clues)}</div>
+                       <p class="text-xs sm:text-sm text-slate-600 mt-2"><strong>Objetivo:</strong> ${escapeHtml(item.translationHint)}</p>`
+                        : ""
+                    }
+              </div>
+              ${answerState
+                        ? answerState.isCorrect
+                            ? `<span class="shrink-0 bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-extrabold px-3 py-1 rounded-full">BIEN</span>`
+                            : `<span class="shrink-0 bg-rose-100 text-rose-800 border border-rose-300 text-xs font-extrabold px-3 py-1 rounded-full">REVISAR</span>`
+                        : ""
+                    }
+            </div>
+        `;
+
+                // Renderizar botones de opción múltiple o caja de texto libre (Punto 5 ítems 4 y 5)
+                if (item.mode === "input") {
+                    const currentVal = answerState ? answerState.selected : "";
+                    html += `
+            <div class="mt-4 flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                id="input-${item.id}"
+                value="${escapeHtml(currentVal)}"
+                placeholder="${escapeHtml(item.placeholder || "")}"
+                class="flex-1 border border-slate-300 focus:border-blue-800 focus:outline-none rounded-xl px-3.5 py-2.5 text-sm sm:text-base font-medium text-slate-900"
+              />
+              <button
+                type="button"
+                data-check-input="${item.id}"
+                class="bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition cursor-pointer shrink-0"
+              >
+                Comprobar oración
+              </button>
+            </div>
+          `;
+                } else {
+                    html += `<div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">`;
+                    item.options.forEach(opt => {
+                        let btnClass = "bg-slate-50 hover:bg-blue-50 border-slate-300 text-slate-800";
+                        if (answerState) {
+                            if (opt === item.correct) {
+                                btnClass = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold";
+                            } else if (opt === answerState.selected && !answerState.isCorrect) {
+                                btnClass = "bg-rose-50 border-rose-500 text-rose-950 font-bold";
+                            } else {
+                                btnClass = "bg-slate-50 border-slate-200 text-slate-400";
+                            }
+                        }
+                        html += `
+              <button
+                type="button"
+                data-item-id="${item.id}"
+                data-option="${escapeHtml(opt)}"
+                class="option-btn text-left px-4 py-3 rounded-xl border text-sm sm:text-base transition cursor-pointer ${btnClass}"
+              >
+                ${escapeHtml(opt)}
+              </button>
+            `;
+                    });
+                    html += `</div>`;
+                }
+
+                // Bloque de retroalimentación pedagógica (cuando ya respondió)
+                if (answerState) {
+                    if (answerState.isCorrect) {
+                        html += `
+              <div class="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs sm:text-sm text-emerald-950 space-y-1.5 fade-in">
+                <p class="font-extrabold text-emerald-800">¡Correcto!</p>
+                ${item.translation ? `<p><strong>Qué decía la oración:</strong> "${escapeHtml(item.translation)}"</p>` : ""}
+                <p><strong>Por qué está bien:</strong> ${escapeHtml(item.whyCorrect)}</p>
+              </div>
+            `;
+                    } else {
+                        const specificMistake =
+                            answerState.customFeedback ||
+                            (item.wrongNotes && item.wrongNotes[answerState.selected]) ||
+                            "La opción elegida no coincide con la estructura que pide la oración.";
+
+                        html += `
+              <div class="mt-4 bg-rose-50 border border-rose-200 rounded-xl p-4 text-xs sm:text-sm text-rose-950 space-y-2 fade-in">
+                <p class="font-extrabold text-rose-800">Incorrecto — Miremos juntas qué pasó:</p>
+                ${item.translation
+                                ? `<p><strong>1. Qué quería decir la frase en español:</strong> "${escapeHtml(item.translation)}"</p>`
+                                : item.questionEs
+                                    ? `<p><strong>1. Qué preguntaba en español:</strong> "${escapeHtml(item.questionEs)}"</p>`
+                                    : ""
+                            }
+                <p><strong>2. En qué te equivocaste:</strong> ${escapeHtml(specificMistake)}</p>
+                <p><strong>3. Pista clave y respuesta correcta:</strong> La pista es <em>${escapeHtml(item.clue)}</em>. La respuesta correcta es <strong class="underline">${escapeHtml(item.correct)}</strong>. ${escapeHtml(item.whyCorrect)}</p>
+              </div>
+            `;
+                    }
+                }
+
+                html += `</article>`;
+            });
+            html += `</div>`;
+
+            container.innerHTML = html;
+            attachSectionEvents();
+        }
+
+        // =========================================================================
+        // EVENTOS DE INTERACCIÓN
+        // =========================================================================
+        function attachSectionEvents() {
+            // Botón ayuda de lectura en Punto 2
+            const btnPassageHelp = document.getElementById("btn-toggle-passage-help");
+            if (btnPassageHelp) {
+                btnPassageHelp.addEventListener("click", () => {
+                    showPassageHelp = !showPassageHelp;
+                    renderCurrentTab();
+                });
+            }
+
+            // Botones de opción múltiple
+            document.querySelectorAll(".option-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const itemId = btn.getAttribute("data-item-id");
+                    const chosen = btn.getAttribute("data-option");
+                    const item = EXAM_DATA[currentTab].items.find(it => it.id === itemId);
+                    if (!item) return;
+
+                    userAnswers[itemId] = {
+                        selected: chosen,
+                        isCorrect: chosen === item.correct
+                    };
+                    updateScoresAndBadges();
+                    renderCurrentTab();
+                });
+            });
+
+            // Botones de comprobar oración escrita (Punto 5)
+            document.querySelectorAll("[data-check-input]").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const itemId = btn.getAttribute("data-check-input");
+                    const inputEl = document.getElementById(`input-${itemId}`);
+                    const item = EXAM_DATA[currentTab].items.find(it => it.id === itemId);
+                    if (!inputEl || !item) return;
+
+                    const rawVal = inputEl.value.trim();
+                    const normalized = rawVal
+                        .toLowerCase()
+                        .replace(/[.,!?]/g, "")
+                        .replace(/\s+/g, " ")
+                        .trim();
+
+                    const isCorrect = item.acceptedAnswers.includes(normalized);
+                    const customFeedback = isCorrect ? null : item.analyzeInput(rawVal);
+
+                    userAnswers[itemId] = {
+                        selected: rawVal,
+                        isCorrect,
+                        customFeedback
+                    };
+                    updateScoresAndBadges();
+                    renderCurrentTab();
+                });
+            });
+        }
+
+        // Navegación por pestañas
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                currentTab = Number(btn.getAttribute("data-tab"));
+                renderCurrentTab();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        });
+
+        document.getElementById("btn-prev-tab").addEventListener("click", () => {
+            if (currentTab > 1) {
+                currentTab--;
+                renderCurrentTab();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        });
+
+        document.getElementById("btn-next-tab").addEventListener("click", () => {
+            currentTab = currentTab < 5 ? currentTab + 1 : 1;
+            renderCurrentTab();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // Ayuda Memoria
+        const cheatsheetPanel = document.getElementById("cheatsheet-panel");
+        document.getElementById("btn-toggle-cheatsheet").addEventListener("click", () => {
+            cheatsheetPanel.classList.toggle("hidden");
+        });
+        document.getElementById("btn-close-cheatsheet").addEventListener("click", () => {
+            cheatsheetPanel.classList.add("hidden");
+        });
+
+        // Reiniciar todo (con confirmación integrada en la interfaz)
+        const resetBanner = document.getElementById("reset-banner");
+        document.getElementById("btn-reset-all").addEventListener("click", () => {
+            resetBanner.classList.remove("hidden");
+        });
+        document.getElementById("btn-cancel-reset").addEventListener("click", () => {
+            resetBanner.classList.add("hidden");
+        });
+        document.getElementById("btn-confirm-reset").addEventListener("click", () => {
+            userAnswers = {};
+            showPassageHelp = false;
+            resetBanner.classList.add("hidden");
+            updateScoresAndBadges();
+            renderCurrentTab();
+        });
+
+        // Inicialización al cargar la página
+        window.addEventListener("DOMContentLoaded", () => {
+            updateScoresAndBadges();
+            renderCurrentTab();
+        });
+    </script>
+</body>
+
+</html>
