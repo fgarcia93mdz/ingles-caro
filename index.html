@@ -60,6 +60,22 @@
             border-radius: 4px;
             border-bottom: 2px solid #9333ea;
         }
+
+        .fade-in {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -75,19 +91,27 @@
                 </div>
                 <div>
                     <h1 class="text-lg md:text-xl font-bold leading-tight">Entrenador Integrador de Inglés</h1>
-                    <p class="text-xs text-slate-300">Práctica guiada con audio, pistas visuales y corrección explicada
-                    </p>
+                    <p class="text-xs text-slate-300">Práctica guiada con audio, traducciones ocultas con ojo y
+                        corrección explicada</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <!-- Global Eye Toggle -->
+                <button onclick="toggleAllTranslations()" id="btn-global-eye"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg border border-slate-600 transition flex items-center gap-2 cursor-pointer">
+                    <span id="global-eye-icon"></span>
+                    <span id="global-eye-label">Mostrar todas las traducciones</span>
+                </button>
+
                 <div
                     class="bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-700 text-sm flex items-center gap-2">
                     <span class="text-slate-400">Puntaje:</span>
-                    <span id="score-display" class="font-bold text-emerald-400">0 / 23</span>
+                    <span id="score-display" class="font-bold text-emerald-400">0 / 25</span>
                 </div>
+
                 <button onclick="toggleCheatSheet()"
-                    class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                    class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm cursor-pointer">
                     Ayuda Memoria
                 </button>
             </div>
@@ -97,23 +121,23 @@
         <nav class="bg-slate-800 border-t border-slate-700">
             <div class="w-[96%] max-w-[1440px] mx-auto flex overflow-x-auto no-scrollbar">
                 <button onclick="switchTab(1)" id="tab-1"
-                    class="tab-btn px-5 py-3 text-sm font-semibold border-b-2 border-indigo-400 text-white whitespace-nowrap">
-                    Punto 1: Crímenes
+                    class="tab-btn px-5 py-3 text-sm font-semibold border-b-2 border-indigo-400 text-white whitespace-nowrap cursor-pointer">
+                    Punto 1: Robbery vs. Stole
                 </button>
                 <button onclick="switchTab(2)" id="tab-2"
-                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
+                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap cursor-pointer">
                     Punto 2: Texto y 5 Preguntas
                 </button>
                 <button onclick="switchTab(3)" id="tab-3"
-                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
+                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap cursor-pointer">
                     Punto 3: When o While
                 </button>
                 <button onclick="switchTab(4)" id="tab-4"
-                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
+                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap cursor-pointer">
                     Punto 4: Verbos (-ing / -ed)
                 </button>
                 <button onclick="switchTab(5)" id="tab-5"
-                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
+                    class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap cursor-pointer">
                     Punto 5: Armar Oraciones
                 </button>
             </div>
@@ -123,28 +147,28 @@
     <!-- Main Content -->
     <main class="flex-1 w-[96%] max-w-[1440px] mx-auto py-6">
 
-        <!-- ==================== PUNTO 1: CRÍMENES ==================== -->
+        <!-- ==================== PUNTO 1: ROBBERY VS STOLE ==================== -->
         <section id="section-1" class="space-y-6">
             <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                 <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Punto 1 del
                             Examen</span>
-                        <h2 class="text-2xl font-bold text-slate-900">Vocabulario de Crímenes (Crime Vocabulary)</h2>
-                        <p class="text-slate-600 text-sm mt-1">Observá cada ilustración, escuchá cómo se pronuncia la
-                            palabra y asociá la acción con su nombre en inglés.</p>
+                        <h2 class="text-2xl font-bold text-slate-900">Diferencia clave: ROBBERY vs. STOLE</h2>
+                        <p class="text-slate-600 text-sm mt-1">Observá las dos ilustraciones, escuchá cómo se pronuncian
+                            y apretá el ícono del ojo si querés ver la explicación o traducción en español.</p>
                     </div>
                 </div>
 
-                <!-- Visual Glossary Grid -->
-                <div id="crime-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
+                <!-- Visual Comparison Grid (Only Robbery and Stole) -->
+                <div id="crime-cards-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4"></div>
             </div>
 
             <!-- Punto 1 Practice -->
             <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                <h3 class="text-lg font-bold text-slate-900 mb-1">Práctica Punto 1: Identificá el crimen</h3>
-                <p class="text-sm text-slate-600 mb-5">Leé la situación (podés escucharla en inglés) y elegí qué delito
-                    ocurrió.</p>
+                <h3 class="text-lg font-bold text-slate-900 mb-1">Práctica Punto 1: ¿Corresponde ROBBERY o STOLE?</h3>
+                <p class="text-sm text-slate-600 mb-5">Intentá leer primero en inglés sin abrir el ojo. Si necesitás
+                    ayuda para entender la oración, tocá el ícono del ojo para revelar el español.</p>
                 <div id="quiz-1-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
             </div>
         </section>
@@ -164,15 +188,15 @@
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <button onclick="readStory(1.0)"
-                                class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
+                                class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition cursor-pointer">
                                 Escuchar texto
                             </button>
                             <button onclick="readStory(0.72)"
-                                class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition">
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition cursor-pointer">
                                 Escuchar lento
                             </button>
                             <button onclick="stopSpeech()"
-                                class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-2 rounded-lg border border-rose-200 transition">
+                                class="bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-2 rounded-lg border border-rose-200 transition cursor-pointer">
                                 Detener
                             </button>
                         </div>
@@ -222,28 +246,36 @@
                         </svg>
                     </div>
 
-                    <!-- Clue Toggle Bar -->
+                    <!-- Clue & Translation Toggle Bar -->
                     <div
                         class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4">
-                        <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-800">
+                        <label
+                            class="flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold text-slate-800">
                             <input type="checkbox" id="toggle-clues" onchange="toggleClues()"
                                 class="w-4 h-4 accent-indigo-600 rounded">
                             <span>Subrayar pistas en el texto</span>
                         </label>
-                        <div class="flex flex-wrap gap-1.5 text-[11px] font-semibold">
-                            <span class="bg-yellow-200 px-2 py-0.5 rounded">Who (Quién)</span>
-                            <span class="bg-sky-200 px-2 py-0.5 rounded">Where (Dónde)</span>
-                            <span class="bg-green-200 px-2 py-0.5 rounded">What (Qué)</span>
-                            <span class="bg-purple-200 px-2 py-0.5 rounded">When (Cuándo)</span>
-                            <span class="bg-rose-200 px-2 py-0.5 rounded">Why (Por qué)</span>
-                        </div>
+
+                        <button type="button" onclick="toggleSingleTranslation('story-es')" id="eye-btn-story-es"
+                            class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-indigo-700 bg-white hover:bg-indigo-50 px-3 py-1.5 rounded-lg border border-slate-300 transition cursor-pointer">
+                            <span class="eye-icon-slot"></span>
+                            <span class="eye-text-slot">Ver traducción del texto</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5 text-[11px] font-semibold mb-3">
+                        <span class="bg-yellow-200 px-2 py-0.5 rounded">Who (Quién)</span>
+                        <span class="bg-sky-200 px-2 py-0.5 rounded">Where (Dónde)</span>
+                        <span class="bg-green-200 px-2 py-0.5 rounded">What (Qué)</span>
+                        <span class="bg-purple-200 px-2 py-0.5 rounded">When (Cuándo)</span>
+                        <span class="bg-rose-200 px-2 py-0.5 rounded">Why (Por qué)</span>
                     </div>
 
                     <!-- Reading Text -->
                     <div id="story-container"
                         class="font-reading text-[16.5px] leading-relaxed text-slate-800 space-y-3.5">
                         <p>
-                            Last Friday night, a serious burglary happened at the <span
+                            Last Friday night, a serious robbery happened at the <span
                                 class="clue-highlight clue-where">City Museum</span>. At <span
                                 class="clue-highlight clue-when">11:30 PM</span>, it was raining heavily and the streets
                             were completely empty. <span class="clue-highlight clue-who">Mr. Harris, the night security
@@ -252,9 +284,9 @@
                         </p>
                         <p>
                             Suddenly, the loud alarm went off. Mr. Harris ran to the main exhibition room. While he was
-                            running down the corridor, he saw a tall man dressed in black clothes. The thief was
-                            climbing out of a broken window with <span class="clue-highlight clue-what">a golden crown
-                                from the 18th century</span>.
+                            running down the corridor, he saw a tall man dressed in black clothes. The thief broke a
+                            window and stole <span class="clue-highlight clue-what">a golden crown from the 18th
+                                century</span>.
                         </p>
                         <p>
                             The guard shouted, "Stop!" and tried to catch him, but he slipped on the wet floor and fell
@@ -265,6 +297,24 @@
                                 the glass</span>.
                         </p>
                     </div>
+
+                    <!-- Hidden Spanish Translation of the Story -->
+                    <div id="trans-story-es"
+                        class="hidden mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-slate-800 leading-relaxed space-y-2 fade-in">
+                        <p class="font-bold text-amber-950">Traducción del texto al español:</p>
+                        <p>El viernes pasado por la noche, ocurrió un grave robo en el Museo de la Ciudad. A las 11:30
+                            PM, llovía intensamente y las calles estaban completamente vacías. El Sr. Harris, el guardia
+                            de seguridad nocturno, estaba sentado en su oficina mientras tomaba una taza de café
+                            caliente y revisaba las cámaras de seguridad.</p>
+                        <p>De repente, sonó la fuerte alarma. El Sr. Harris corrió hacia la sala principal de
+                            exposiciones. Mientras corría por el pasillo, vio a un hombre alto vestido con ropa negra.
+                            El ladrón rompió una ventana y robó (<em>stole</em>) una corona de oro del siglo XVIII.</p>
+                        <p>El guardia gritó "¡Alto!" e intentó atraparlo, pero se resbaló en el piso mojado y se cayó.
+                            El ladrón escapó en una moto negra antes de que llegara la policía diez minutos después. A
+                            la mañana siguiente, el detective Miller encontró una huella con barro cerca de la ventana.
+                            La policía cree que el ladrón conocía bien el museo porque desactivó los sensores láser
+                            antes de romper el vidrio.</p>
+                    </div>
                 </div>
 
                 <!-- Right Column: 5 Questions -->
@@ -272,7 +322,7 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Punto 2 del Examen</span>
                     <h3 class="text-xl font-bold text-slate-900">Respondé las 5 preguntas sobre el texto</h3>
                     <p class="text-sm text-slate-600 mt-1 mb-5">Fijate primero qué pide la palabra inicial (Who, What,
-                        Where, When, Why). Si te trabás, activá "Subrayar pistas en el texto" a la izquierda.</p>
+                        Where, When, Why). Si no entendés la pregunta, apretá el ícono del ojo en esa tarjeta.</p>
 
                     <div id="quiz-2-container" class="space-y-5"></div>
                 </div>
@@ -418,7 +468,7 @@
             <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <h3 class="text-xl font-bold text-slate-900">Ayuda Memoria Rápida para el Examen</h3>
                 <button onclick="toggleCheatSheet()"
-                    class="text-slate-500 hover:text-slate-900 font-bold text-lg px-2">Cerrar</button>
+                    class="text-slate-500 hover:text-slate-900 font-bold text-lg px-2 cursor-pointer">Cerrar</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4 text-sm">
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
@@ -432,12 +482,12 @@
                     </ul>
                 </div>
                 <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                    <h4 class="font-bold text-indigo-700 mb-2">Verbos Irregulares Clave (Puntos 4 y 5)</h4>
+                    <h4 class="font-bold text-indigo-700 mb-2">Verbos Irregulares Clave (Puntos 1, 4 y 5)</h4>
                     <ul class="space-y-1 text-slate-700 columns-2">
+                        <li>steal → <strong>stole</strong> (robar)</li>
                         <li>go → <strong>went</strong></li>
                         <li>see → <strong>saw</strong></li>
                         <li>run → <strong>ran</strong></li>
-                        <li>steal → <strong>stole</strong></li>
                         <li>break → <strong>broke</strong></li>
                         <li>find → <strong>found</strong></li>
                         <li>take → <strong>took</strong></li>
@@ -453,10 +503,72 @@
     </div>
 
     <script>
+        // ==================== EYE ICONS (SVG) ====================
+        const EYE_CLOSED_SVG = `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg>`;
+        const EYE_OPEN_SVG = `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
+        let globalShowTranslations = false;
+
+        function toggleSingleTranslation(id) {
+            const box = document.getElementById(`trans-${id}`);
+            const btn = document.getElementById(`eye-btn-${id}`);
+            if (!box || !btn) return;
+            const isHidden = box.classList.contains('hidden');
+            const iconSlot = btn.querySelector('.eye-icon-slot');
+            const textSlot = btn.querySelector('.eye-text-slot');
+
+            if (isHidden) {
+                box.classList.remove('hidden');
+                if (iconSlot) iconSlot.innerHTML = EYE_OPEN_SVG;
+                if (textSlot) textSlot.textContent = textSlot.textContent.replace('Ver', 'Ocultar');
+            } else {
+                box.classList.add('hidden');
+                if (iconSlot) iconSlot.innerHTML = EYE_CLOSED_SVG;
+                if (textSlot) textSlot.textContent = textSlot.textContent.replace('Ocultar', 'Ver');
+            }
+        }
+
+        function toggleAllTranslations() {
+            globalShowTranslations = !globalShowTranslations;
+            const globalBtnIcon = document.getElementById('global-eye-icon');
+            const globalBtnLabel = document.getElementById('global-eye-label');
+
+            globalBtnIcon.innerHTML = globalShowTranslations ? EYE_OPEN_SVG : EYE_CLOSED_SVG;
+            globalBtnLabel.textContent = globalShowTranslations ? 'Ocultar todas las traducciones' : 'Mostrar todas las traducciones';
+
+            document.querySelectorAll('[id^="trans-"]').forEach(box => {
+                const id = box.id.replace('trans-', '');
+                const btn = document.getElementById(`eye-btn-${id}`);
+                const iconSlot = btn ? btn.querySelector('.eye-icon-slot') : null;
+                const textSlot = btn ? btn.querySelector('.eye-text-slot') : null;
+
+                if (globalShowTranslations) {
+                    box.classList.remove('hidden');
+                    if (iconSlot) iconSlot.innerHTML = EYE_OPEN_SVG;
+                    if (textSlot) textSlot.textContent = textSlot.textContent.replace('Ver', 'Ocultar');
+                } else {
+                    box.classList.add('hidden');
+                    if (iconSlot) iconSlot.innerHTML = EYE_CLOSED_SVG;
+                    if (textSlot) textSlot.textContent = textSlot.textContent.replace('Ocultar', 'Ver');
+                }
+            });
+        }
+
+        function renderEyeButton(id, label = 'Ver traducción') {
+            const icon = globalShowTranslations ? EYE_OPEN_SVG : EYE_CLOSED_SVG;
+            const text = globalShowTranslations ? label.replace('Ver', 'Ocultar') : label;
+            return `
+        <button type="button" onclick="toggleSingleTranslation('${id}')" id="eye-btn-${id}"
+          class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-indigo-700 bg-white hover:bg-indigo-50 px-2.5 py-1 rounded-md border border-slate-300 transition cursor-pointer">
+          <span class="eye-icon-slot">${icon}</span>
+          <span class="eye-text-slot">${text}</span>
+        </button>
+      `;
+        }
+
         // ==================== AUDIO (TTS) ====================
         function speakText(text, rate = 0.95) {
             if (!('speechSynthesis' in window)) {
-                alert('Tu navegador no soporta lectura en voz alta.');
                 return;
             }
             window.speechSynthesis.cancel();
@@ -475,132 +587,142 @@
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
 
-        // ==================== DATA: CRIMES (PUNTO 1) ====================
+        // ==================== DATA: ONLY ROBBERY & STOLE (PUNTO 1) ====================
         const crimesData = [
             {
+                id: 'card_robbery',
                 word: 'Robbery',
-                es: 'Robo con violencia / asalto',
-                verb: 'robbed a bank / store',
-                desc: 'Robar un banco o local amenazando a personas.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#eef2ff"/><rect x="20" y="18" width="80" height="40" rx="4" fill="#4f46e5"/><text x="60" y="34" fill="#fff" font-size="9" font-weight="bold" text-anchor="middle">BANK</text><circle cx="45" cy="48" r="6" fill="#fde047"/><text x="45" y="51" fill="#854d0e" font-size="8" font-weight="bold" text-anchor="middle">$</text><circle cx="75" cy="46" r="7" fill="#1e293b"/></svg>`
+                grammarTag: 'SUSTANTIVO (Nombre del delito)',
+                enDesc: 'Taking money or property from a person or place (like a bank or store) using force, weapons, or threats.',
+                enExample: 'Example: "There was a bank robbery yesterday."',
+                esTitle: 'Robo con violencia / asalto',
+                esDesc: 'Es el nombre del delito cuando se roba un lugar o a una persona usando fuerza, armas o amenazas. Se usa con artículos (a robbery / the robbery).',
+                esExample: 'Ejemplo: "Hubo un robo/asalto al banco ayer."',
+                svg: `<svg viewBox="0 0 240 95" class="w-full h-24 rounded-lg border border-indigo-100">
+          <rect width="240" height="95" fill="#eef2ff"/>
+          <rect x="28" y="20" width="90" height="58" rx="5" fill="#4f46e5"/>
+          <text x="73" y="42" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">BANK</text>
+          <rect x="61" y="52" width="24" height="26" fill="#312e81"/>
+          <circle cx="155" cy="40" r="11" fill="#1e293b"/>
+          <rect x="142" y="53" width="26" height="25" rx="4" fill="#1e293b"/>
+          <circle cx="195" cy="58" r="14" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+          <text x="195" y="63" fill="#854d0e" font-size="14" font-weight="bold" text-anchor="middle">$</text>
+        </svg>`
             },
             {
-                word: 'Burglary',
-                es: 'Robo entrando a una casa/edificio',
-                verb: 'broke into a house / museum',
-                desc: 'Entrar a la fuerza (por ventana o puerta) a robar.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#f0fdf4"/><polygon points="30,32 60,12 90,32" fill="#166534"/><rect x="36" y="32" width="48" height="28" fill="#bbf7d0" stroke="#166534" stroke-width="2"/><rect x="52" y="38" width="16" height="16" fill="#0f172a"/><polyline points="54,38 62,46 58,54" fill="none" stroke="#38bdf8" stroke-width="1.5"/></svg>`
-            },
-            {
-                word: 'Pickpocketing',
-                es: 'Hurto / carterista',
-                verb: 'stole a wallet from a pocket',
-                desc: 'Sacar billetera o celular del bolsillo sin que se note.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#fffbeb"/><rect x="38" y="16" width="44" height="42" rx="6" fill="#d97706"/><path d="M46,34 L74,34 L70,50 L50,50 Z" fill="#92400e"/><rect x="53" y="24" width="14" height="16" rx="2" fill="#10b981"/></svg>`
-            },
-            {
-                word: 'Shoplifting',
-                es: 'Hurto en una tienda',
-                verb: 'stole clothes from a shop',
-                desc: 'Esconder productos de un comercio y salir sin pagar.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#fdf2f8"/><rect x="28" y="24" width="64" height="34" rx="4" fill="#db2777"/><path d="M24,24 L96,24 L90,14 L30,14 Z" fill="#9d174d"/><rect x="50" y="36" width="20" height="22" fill="#fbcfe8"/></svg>`
-            },
-            {
-                word: 'Vandalism',
-                es: 'Vandalismo',
-                verb: 'painted graffiti / broke windows',
-                desc: 'Romper bienes públicos o pintar paredes sin permiso.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#f8fafc"/><rect x="24" y="16" width="72" height="42" fill="#cbd5e1"/><path d="M35,44 Q55,20 75,42 T90,30" fill="none" stroke="#e11d48" stroke-width="4" stroke-linecap="round"/></svg>`
-            },
-            {
-                word: 'Arson',
-                es: 'Incendio intencional',
-                verb: 'set fire to a building/forest',
-                desc: 'Prender fuego a propósito un lugar o bosque.',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#fef2f2"/><path d="M60,14 C75,30 78,48 60,58 C42,48 45,30 60,14 Z" fill="#ef4444"/><path d="M60,26 C68,36 69,48 60,55 C51,48 52,36 60,26 Z" fill="#facc15"/></svg>`
-            },
-            {
-                word: 'Kidnapping',
-                es: 'Secuestro',
-                verb: 'kidnapped / carried off a person',
-                desc: 'Llevarse a una persona por la fuerza (como hizo el dragón con Ronald).',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#f5f3ff"/><circle cx="44" cy="28" r="8" fill="#7c3aed"/><rect x="36" y="38" width="16" height="18" rx="3" fill="#7c3aed"/><path d="M64,35 L86,35 M79,28 L86,35 L79,42" stroke="#4c1d95" stroke-width="3" fill="none"/></svg>`
-            },
-            {
-                word: 'Theft',
-                es: 'Robo general (sin violencia)',
-                verb: 'stole a bike / car / object',
-                desc: 'Llevarse algo ajeno (una bici, un auto o un objeto).',
-                svg: `<svg viewBox="0 0 120 70" class="w-full h-16"><rect width="120" height="70" rx="6" fill="#ecfeff"/><circle cx="42" cy="46" r="10" fill="none" stroke="#0891b2" stroke-width="3"/><circle cx="78" cy="46" r="10" fill="none" stroke="#0891b2" stroke-width="3"/><polyline points="42,46 56,30 72,30 78,46" fill="none" stroke="#0e7490" stroke-width="3"/></svg>`
+                id: 'card_stole',
+                word: 'Stole',
+                grammarTag: 'VERBO EN PASADO (Pasado irregular de STEAL)',
+                enDesc: 'The action of taking something that belongs to someone else without permission (a bike, a phone, a crown, money).',
+                enExample: 'Example: "The thief stole a golden crown from the museum."',
+                esTitle: 'Robó / sustrajo (acción en pasado)',
+                esDesc: 'Es el verbo en pasado simple (viene de "steal"). Va siempre después de la persona que comete la acción (He stole... / Someone stole...) y antes del objeto robado.',
+                esExample: 'Ejemplo: "El ladrón robó una corona de oro del museo."',
+                svg: `<svg viewBox="0 0 240 95" class="w-full h-24 rounded-lg border border-emerald-100">
+          <rect width="240" height="95" fill="#ecfdf5"/>
+          <circle cx="62" cy="40" r="11" fill="#0f172a"/>
+          <rect x="49" y="53" width="26" height="25" rx="4" fill="#0f172a"/>
+          <path d="M88,48 L138,48 M128,40 L138,48 L128,56" stroke="#059669" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <rect x="155" y="26" width="52" height="44" rx="6" fill="#10b981"/>
+          <polygon points="168,54 173,38 181,48 189,38 194,54" fill="#fef08a"/>
+        </svg>`
             }
         ];
 
         function renderCrimeCards() {
             const grid = document.getElementById('crime-cards-grid');
             grid.innerHTML = crimesData.map(item => `
-        <div class="rounded-xl border border-slate-200 p-3.5 bg-slate-50/70 hover:bg-white hover:shadow-md transition flex flex-col justify-between">
+        <div class="rounded-xl border border-slate-200 p-5 bg-slate-50/70 hover:bg-white hover:shadow-md transition flex flex-col justify-between">
           <div>
             ${item.svg}
-            <div class="flex items-center justify-between mt-3">
-              <h4 class="font-extrabold text-slate-900 text-base">${item.word}</h4>
-              <button onclick="speakText('${item.word}. ${item.verb}')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-md">
-                Escuchar
-              </button>
+            <div class="flex flex-wrap items-center justify-between gap-2 mt-3.5">
+              <div>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">${item.grammarTag}</span>
+                <h4 class="font-extrabold text-slate-900 text-2xl">${item.word}</h4>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="speakText('${item.word}. ${item.enExample.replace(/"/g, '')}')" class="text-xs font-semibold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition cursor-pointer">
+                  Escuchar
+                </button>
+                ${renderEyeButton(item.id, 'Ver español')}
+              </div>
             </div>
-            <p class="text-xs font-semibold text-indigo-700 mt-0.5">${item.es}</p>
-            <p class="text-xs text-slate-600 mt-1.5">${item.desc}</p>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200 text-[11px] font-mono text-slate-700">
-            Acción: ${item.verb}
+
+            <p class="text-sm text-slate-800 mt-3 leading-relaxed">${item.enDesc}</p>
+            <p class="text-xs font-mono text-slate-700 bg-white border border-slate-200 px-3 py-2 rounded-lg mt-2.5">${item.enExample}</p>
+
+            <!-- Hidden Spanish Translation -->
+            <div id="trans-${item.id}" class="${globalShowTranslations ? '' : 'hidden'} mt-3 p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-slate-800 space-y-1 fade-in">
+              <p class="font-bold text-amber-950">${item.esTitle}</p>
+              <p>${item.esDesc}</p>
+              <p class="italic text-slate-700">${item.esExample}</p>
+            </div>
           </div>
         </div>
       `).join('');
         }
 
         // ==================== QUIZZES DATA ====================
+        // Punto 1: Only Robbery vs Stole (6 exercises)
         const quiz1 = [
             {
                 id: 'q1_1',
-                prompt: 'Two masked men entered the bank with guns and took all the money.',
-                translation: 'Dos hombres enmascarados entraron al banco con armas y se llevaron todo el dinero.',
-                options: ['Robbery', 'Shoplifting', 'Vandalism'],
-                correct: 0,
-                explanation: 'Es <strong>Robbery</strong> porque hubo amenaza/violencia en un banco. <em>Shoplifting</em> es esconder algo en una tienda sin violencia y <em>Vandalism</em> es romper o pintar paredes.'
+                prompt: 'The thief entered the museum and ________ a famous golden crown.',
+                translation: 'El ladrón entró al museo y robó (stole) una famosa corona de oro.',
+                options: ['Robbery', 'Stole'],
+                correct: 1,
+                explanation: 'Va <strong>Stole</strong> porque necesitamos un <strong>verbo en pasado</strong> después del sujeto (<em>The thief</em>) para indicar qué objeto se llevó (<em>a golden crown</em>).'
             },
             {
                 id: 'q1_2',
-                prompt: 'Someone broke the kitchen window at night and stole our television while we were sleeping.',
-                translation: 'Alguien rompió la ventana de la cocina de noche y robó nuestro televisor mientras dormíamos.',
-                options: ['Pickpocketing', 'Burglary', 'Arson'],
-                correct: 1,
-                explanation: 'Es <strong>Burglary</strong> porque entraron ilegalmente a una casa rompiendo una ventana para robar. <em>Pickpocketing</em> es sacar algo del bolsillo en la calle.'
+                prompt: 'Two masked men with guns committed a ________ at the National Bank yesterday.',
+                translation: 'Dos hombres enmascarados con armas cometieron un asalto/robo (robbery) en el Banco Nacional ayer.',
+                options: ['Robbery', 'Stole'],
+                correct: 0,
+                explanation: 'Va <strong>Robbery</strong> porque delante tiene el artículo <em>"a"</em> (un robo/asalto) y describe un delito con armas en un banco.'
             },
             {
                 id: 'q1_3',
-                prompt: 'A teenager put three expensive t-shirts inside his backpack and walked out of the store without paying.',
-                translation: 'Un adolescente metió tres remeras caras dentro de su mochila y salió de la tienda sin pagar.',
-                options: ['Kidnapping', 'Arson', 'Shoplifting'],
-                correct: 2,
-                explanation: 'Es <strong>Shoplifting</strong> porque robó mercadería de una tienda (<em>store</em>) escondiéndola sin pagar.'
+                prompt: 'Someone ________ my new bicycle while I was inside the supermarket.',
+                translation: 'Alguien robó (stole) mi bicicleta nueva mientras yo estaba adentro del supermercado.',
+                options: ['Robbery', 'Stole'],
+                correct: 1,
+                explanation: 'Va <strong>Stole</strong> porque va justo después de la persona (<em>Someone</em> = alguien) indicando la acción de llevarse la bicicleta.'
             },
             {
                 id: 'q1_4',
-                prompt: 'In the fairy tale, the green dragon carried off Prince Ronald and locked him in a cave.',
-                translation: 'En el cuento, el dragón verde se llevó al príncipe Ronald y lo encerró en una cueva.',
-                options: ['Kidnapping', 'Pickpocketing', 'Vandalism'],
+                prompt: 'The police are investigating the ________ at the jewelry store on Main Street.',
+                translation: 'La policía está investigando el robo/asalto (robbery) en la joyería de la calle principal.',
+                options: ['Robbery', 'Stole'],
                 correct: 0,
-                explanation: 'Es <strong>Kidnapping</strong> (secuestro) porque se llevó a una persona por la fuerza.'
+                explanation: 'Va <strong>Robbery</strong> porque después de <em>"the"</em> (el) necesitamos el sustantivo que nombra el delito.'
+            },
+            {
+                id: 'q1_5',
+                prompt: 'While the security guard was sleeping, the burglar ________ three expensive paintings.',
+                translation: 'Mientras el guardia de seguridad dormía, el ladrón robó (stole) tres pinturas caras.',
+                options: ['Robbery', 'Stole'],
+                correct: 1,
+                explanation: 'Va <strong>Stole</strong> porque <em>the burglar</em> (el ladrón) realizó la acción de sustraer los cuadros.'
+            },
+            {
+                id: 'q1_6',
+                prompt: 'Nobody was hurt during the ________, but the criminals took all the cash.',
+                translation: 'Nadie salió herido durante el robo/asalto (robbery), pero los delincuentes se llevaron todo el efectivo.',
+                options: ['Robbery', 'Stole'],
+                correct: 0,
+                explanation: 'Va <strong>Robbery</strong> porque después de <em>"during the..."</em> (durante el...) va el sustantivo del hecho delictivo.'
             }
         ];
 
         const quiz2 = [
             {
                 id: 'q2_1',
-                prompt: '1. Where did the burglary happen?',
+                prompt: '1. Where did the robbery happen?',
                 translation: '¿Dónde ocurrió el robo?',
                 options: ['At the City Bank', 'At the City Museum', 'At Mr. Harris’s house'],
                 correct: 1,
-                explanation: 'La pregunta empieza con <strong>Where</strong> (¿Dónde?). En la primera oración del texto dice: <em>"...a serious burglary happened at the City Museum."</em>'
+                explanation: 'La pregunta empieza con <strong>Where</strong> (¿Dónde?). En la primera oración del texto dice: <em>"...a serious robbery happened at the City Museum."</em>'
             },
             {
                 id: 'q2_2',
@@ -616,7 +738,7 @@
                 translation: '¿Qué robó el ladrón del museo?',
                 options: ['A golden crown from the 18th century', 'A black motorbike', 'A security camera'],
                 correct: 0,
-                explanation: 'En el segundo párrafo dice que el ladrón salía por la ventana con <em>"a golden crown from the 18th century"</em> (una corona de oro del siglo XVIII).'
+                explanation: 'En el segundo párrafo dice: <em>"The thief broke a window and stole a golden crown from the 18th century"</em> (robó una corona de oro del siglo XVIII).'
             },
             {
                 id: 'q2_4',
@@ -655,11 +777,11 @@
             },
             {
                 id: 'q3_3',
-                prompt: 'The thief escaped on a motorbike ________ the guard was lying on the wet floor.',
-                translation: 'El ladrón escapó en moto ________ el guardia estaba tirado en el piso mojado.',
+                prompt: 'The thief stole the crown ________ the guard was running down the corridor.',
+                translation: 'El ladrón robó la corona ________ el guardia estaba corriendo por el pasillo.',
                 options: ['when', 'while'],
                 correct: 1,
-                explanation: 'Va <strong>while</strong> porque después viene <em>was lying</em> (was + verbo con -ing).'
+                explanation: 'Va <strong>while</strong> porque después viene <em>was running</em> (was + verbo con -ing).'
             },
             {
                 id: 'q3_4',
@@ -698,8 +820,8 @@
             },
             {
                 id: 'q4_4',
-                prompt: 'While the security guards ________ (check) the doors, the thief broke the window.',
-                translation: 'Mientras los guardias de seguridad estaban revisando las puertas, el ladrón rompió la ventana.',
+                prompt: 'While the security guards ________ (check) the doors, the thief stole the money.',
+                translation: 'Mientras los guardias de seguridad estaban revisando las puertas, el ladrón robó el dinero.',
                 options: ['checked', 'was checking', 'were checking'],
                 correct: 2,
                 explanation: '<em>Security guards</em> está en plural (ellos = they) y viene después de <strong>While</strong>, así que va <strong>were checking</strong>.'
@@ -709,7 +831,7 @@
         const quiz5MC = [
             {
                 id: 'q5_1',
-                prompt: 'Uní estas dos acciones: (1) Elizabeth / look for clothes [larga] — (2) she / find a paper bag [corta]',
+                prompt: 'Combine: (1) Elizabeth / look for clothes [larga] — (2) she / find a paper bag [corta]',
                 translation: 'Elizabeth estaba buscando ropa cuando encontró una bolsa de papel.',
                 options: [
                     'Elizabeth was looking for clothes when she found a paper bag.',
@@ -721,19 +843,19 @@
             },
             {
                 id: 'q5_2',
-                prompt: 'Uní estas dos acciones: (1) The thief / climb out the window [larga] — (2) Mr. Harris / see him [corta]',
-                translation: 'Mientras el ladrón estaba saliendo por la ventana, el Sr. Harris lo vio.',
+                prompt: 'Combine: (1) The thief / steal the crown [larga] — (2) Mr. Harris / see him [corta]',
+                translation: 'Mientras el ladrón estaba robando la corona, el Sr. Harris lo vio.',
                 options: [
-                    'While the thief climbed out the window, Mr. Harris was seeing him.',
-                    'While the thief was climbing out the window, Mr. Harris saw him.',
-                    'The thief climbed out the window while Mr. Harris saw him.'
+                    'While the thief stole the crown, Mr. Harris was seeing him.',
+                    'While the thief was stealing the crown, Mr. Harris saw him.',
+                    'The thief stole the crown while Mr. Harris saw him.'
                 ],
                 correct: 1,
-                explanation: 'Después de <strong>While</strong> siempre va la acción larga con <strong>was + -ing</strong> (<em>was climbing</em>) y en la otra parte el Pasado Simple (<em>saw</em>).'
+                explanation: 'Después de <strong>While</strong> siempre va la acción larga con <strong>was + -ing</strong> (<em>was stealing</em>) y en la otra parte el Pasado Simple (<em>saw</em>).'
             },
             {
                 id: 'q5_3',
-                prompt: 'Uní estas dos acciones: (1) They / walk home [larga] — (2) it / start to rain [corta]',
+                prompt: 'Combine: (1) They / walk home [larga] — (2) it / start to rain [corta]',
                 translation: 'Ellos estaban caminando a casa cuando empezó a llover.',
                 options: [
                     'They was walking home when it started to rain.',
@@ -748,7 +870,8 @@
         const quiz5Free = [
             {
                 id: 'q5_free_1',
-                prompt: 'Escribí la oración en inglés usando WHEN:  (Acción larga: I / study English) + (Acción corta: my friend / call me)',
+                prompt: 'Write the sentence using WHEN:  (Long action: I / study English) + (Short action: my friend / call me)',
+                translation: 'Escribí en inglés: "Yo estaba estudiando inglés cuando mi amigo me llamó."',
                 hint: 'Usá: I was studying... when my friend called...',
                 sample: 'I was studying English when my friend called me.',
                 check: (val) => {
@@ -762,7 +885,8 @@
             },
             {
                 id: 'q5_free_2',
-                prompt: 'Escribí la oración en inglés empezando con WHILE:  (Acción larga: She / run in the park) + (Acción corta: she / lose her keys)',
+                prompt: 'Write the sentence starting with WHILE:  (Long action: She / run in the park) + (Short action: she / lose her keys)',
+                translation: 'Escribí en inglés: "Mientras ella estaba corriendo en el parque, perdió sus llaves."',
                 hint: 'Usá: While she was running... , she lost... (pasado de lose = lost)',
                 sample: 'While she was running in the park, she lost her keys.',
                 check: (val) => {
@@ -791,17 +915,24 @@
         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50" id="card-${q.id}">
           <div class="flex items-start justify-between gap-2">
             <p class="font-semibold text-slate-900 text-sm md:text-base">${q.prompt}</p>
-            <button onclick="speakText('${q.prompt.replace(/'/g, "\\'").replace(/________/g, 'blank')}')" class="shrink-0 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded">
-              Escuchar
-            </button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button type="button" onclick="speakText('${q.prompt.replace(/'/g, "\\'").replace(/________/g, 'blank')}')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-200 cursor-pointer">
+                Escuchar
+              </button>
+              ${renderEyeButton(q.id, 'Ver traducción')}
+            </div>
           </div>
-          <p class="text-xs text-slate-500 italic mt-1 mb-3">Traducción: ${q.translation}</p>
 
-          <div class="space-y-2">
+          <!-- Hidden Spanish Translation -->
+          <div id="trans-${q.id}" class="${globalShowTranslations ? '' : 'hidden'} mt-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-xs text-slate-700 italic fade-in">
+            <strong>Español:</strong> ${q.translation}
+          </div>
+
+          <div class="space-y-2 mt-3">
             ${q.options.map((opt, idx) => `
-              <button onclick="handleMC('${q.id}', ${idx}, ${q.correct}, '${containerId}')"
+              <button type="button" onclick="handleMC('${q.id}', ${idx}, ${q.correct})"
                 id="btn-${q.id}-${idx}"
-                class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-indigo-50 hover:border-indigo-400 text-sm font-medium text-slate-800 transition">
+                class="w-full text-left px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-indigo-50 hover:border-indigo-400 text-sm font-medium text-slate-800 transition cursor-pointer">
                 ${opt}
               </button>
             `).join('')}
@@ -853,15 +984,25 @@
             const freeGrid = document.getElementById('q5-free-grid');
             freeGrid.innerHTML = quiz5Free.map((q, index) => `
         <div class="p-4 rounded-xl border border-slate-300 bg-slate-50">
-          <p class="font-bold text-slate-900 text-sm">${q.prompt}</p>
-          <p class="text-xs text-indigo-700 mt-1 mb-3">Pista: ${q.hint}</p>
+          <div class="flex items-start justify-between gap-2">
+            <p class="font-bold text-slate-900 text-sm">${q.prompt}</p>
+            <div class="shrink-0">
+              ${renderEyeButton(q.id, 'Ver traducción')}
+            </div>
+          </div>
+
+          <div id="trans-${q.id}" class="${globalShowTranslations ? '' : 'hidden'} mt-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-xs text-slate-700 italic fade-in">
+            ${q.translation}
+          </div>
+
+          <p class="text-xs text-indigo-700 mt-2 mb-3">Pista: ${q.hint}</p>
           <input type="text" id="input-${q.id}" placeholder="Escribí acá la oración completa en inglés..."
             class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:border-indigo-500">
-          <div class="flex items-center gap-2 mt-3">
-            <button onclick="checkFreeSentence(${index})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+          <div class="flex flex-wrap items-center gap-2 mt-3">
+            <button type="button" onclick="checkFreeSentence(${index})" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition cursor-pointer">
               Corregir mi oración
             </button>
-            <button onclick="speakText('${q.sample}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold px-3 py-2 rounded-lg transition">
+            <button type="button" onclick="speakText('${q.sample}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold px-3 py-2 rounded-lg transition cursor-pointer">
               Escuchar respuesta modelo
             </button>
           </div>
@@ -921,13 +1062,19 @@
         }
 
         // Initialize
-        renderCrimeCards();
-        renderMCList(quiz1, 'quiz-1-container');
-        renderMCList(quiz2, 'quiz-2-container');
-        renderMCList(quiz3, 'quiz-3-container');
-        renderMCList(quiz4, 'quiz-4-container');
-        renderQuiz5();
-        updateScore();
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('global-eye-icon').innerHTML = EYE_CLOSED_SVG;
+            const storyEyeSlot = document.querySelector('#eye-btn-story-es .eye-icon-slot');
+            if (storyEyeSlot) storyEyeSlot.innerHTML = EYE_CLOSED_SVG;
+
+            renderCrimeCards();
+            renderMCList(quiz1, 'quiz-1-container');
+            renderMCList(quiz2, 'quiz-2-container');
+            renderMCList(quiz3, 'quiz-3-container');
+            renderMCList(quiz4, 'quiz-4-container');
+            renderQuiz5();
+            updateScore();
+        });
     </script>
 </body>
 
